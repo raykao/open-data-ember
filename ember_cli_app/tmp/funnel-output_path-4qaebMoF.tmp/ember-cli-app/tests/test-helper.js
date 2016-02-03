@@ -1,0 +1,1 @@
+/Users/raykao/Documents/speaking/webNotWar/opendata-ember-mtl-feb-5-2016/ember_cli_app/tmp/babel-output_path-Zpj6U2dO.tmp/ember-cli-app/tests/test-helper.js

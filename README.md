@@ -4,14 +4,15 @@ This is the repo for my talk at #webNotWar #mtl Feb 5, 2016 about using Ember fo
 
 The repo is divided into three parts:
 
-- ```ember_app```
+- ```ember_cli_app``` The Ember CLI app
 - ```json_api_server``` a simple node/express server that returns a simple JSON api to consume
 - ```html_data``` a plain old HTML page with some tabled data to be used/scraped
 
 ## This talk isn't
 
-- Not an overview of setting up Ember
+- Not an overview of installing/setting up Ember
 
 ## Contact
-Twitter: [@raykao](https://twitter.com/raykao)
-Github: [raykao](https://github.com/raykao)
+
+- Twitter: [@raykao](https://twitter.com/raykao)
+- Github: [raykao](https://github.com/raykao)

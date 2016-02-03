@@ -1,0 +1,1 @@
+/Users/raykao/Documents/speaking/webNotWar/opendata-ember-mtl-feb-5-2016/ember_cli_app/tmp/template_compiler-tmp_cache_dir-Qm44KjeE.tmp/0

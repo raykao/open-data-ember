@@ -1,1 +1,0 @@
-/Users/raykao/Documents/speaking/webNotWar/opendata-ember-mtl-feb-5-2016/ember_cli_app/tmp/funnel-input_base_path-SUY7EBOl.tmp/0/ember-cli-app/initializers/export-application-global.js

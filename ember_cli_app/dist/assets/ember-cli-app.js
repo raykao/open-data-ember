@@ -3,12 +3,67 @@
 
 /* jshint ignore:end */
 
-define('ember-cli-app/adpaters/application', ['exports', 'ember-data'], function (exports, DS) {
+define('ember-cli-app/adapters/application', ['exports', 'ember-data'], function (exports, DS) {
 
   'use strict';
 
-  exports['default'] = DS['default'].JSONAPIAdapter.extend(DataAdapterMixin, {
-    host: 'http://localhost:8000'
+  exports['default'] = DS['default'].RESTAdapter.extend({
+    host: 'http://localhost:3000'
+  });
+
+});
+define('ember-cli-app/adapters/stat', ['exports', 'ember-cli-app/adapters/application', 'ember'], function (exports, ApplicationAdapter, Ember) {
+
+  'use strict';
+
+  var $ = Ember['default'].$;
+
+  function extractStats(htmlDocument) {
+    var stats = [];
+
+    var rows = $(htmlDocument).find('tbody tr');
+
+    $.each(rows, function (_, row) {
+      var props = $(row).find('td');
+
+      var stat = {
+        id: $.trim($(props[0]).text()),
+        age: $.trim($(props[1]).text()),
+        gender: $.trim($(props[2]).text()),
+        height: $.trim($(props[3]).text()),
+        eyeColour: $.trim($(props[4]).text())
+      };
+
+      stats.push(stat);
+    });
+
+    return { stats: stats };
+  }
+
+  exports['default'] = ApplicationAdapter['default'].extend({
+    host: 'http://localhost:8000',
+
+    findAll: function findAll(store, type) {
+      var url = this.get('host');
+
+      return new Ember['default'].RSVP.Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+
+        xhr.open("GET", url, true);
+        xhr.responseType = "document";
+
+        xhr.onload = function () {
+          var payload = extractStats(xhr.response);
+          Ember['default'].run(null, resolve, payload);
+        };
+
+        xhr.onerror = function () {
+          return Ember['default'].run(null, reject, xhr.statusText);
+        };
+
+        xhr.send();
+      });
+    }
   });
 
 });
@@ -111,6 +166,28 @@ define('ember-cli-app/initializers/export-application-global', ['exports', 'embe
   };
 
 });
+define('ember-cli-app/models/person', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  exports['default'] = DS['default'].Model.extend({
+    name: DS['default'].attr('string'),
+    age: DS['default'].attr('number')
+  });
+
+});
+define('ember-cli-app/models/stat', ['exports', 'ember-data'], function (exports, DS) {
+
+  'use strict';
+
+  exports['default'] = DS['default'].Model.extend({
+    age: DS['default'].attr('string'),
+    gender: DS['default'].attr('string'),
+    height: DS['default'].attr('string'),
+    eyeColour: DS['default'].attr('string')
+  });
+
+});
 define('ember-cli-app/router', ['exports', 'ember', 'ember-cli-app/config/environment'], function (exports, Ember, config) {
 
   'use strict';
@@ -119,9 +196,34 @@ define('ember-cli-app/router', ['exports', 'ember', 'ember-cli-app/config/enviro
     location: config['default'].locationType
   });
 
-  Router.map(function () {});
+  Router.map(function () {
+    this.route('people');
+    this.route('stats');
+  });
 
   exports['default'] = Router;
+
+});
+define('ember-cli-app/routes/people', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Route.extend({
+    model: function model() {
+      return this.store.findAll('person');
+    }
+  });
+
+});
+define('ember-cli-app/routes/stats', ['exports', 'ember'], function (exports, Ember) {
+
+  'use strict';
+
+  exports['default'] = Ember['default'].Route.extend({
+    model: function model() {
+      return this.store.findAll('stat');
+    }
+  });
 
 });
 define('ember-cli-app/templates/application', ['exports'], function (exports) {
@@ -131,7 +233,14 @@ define('ember-cli-app/templates/application', ['exports'], function (exports) {
   exports['default'] = Ember.HTMLBars.template((function() {
     return {
       meta: {
-        "revision": "Ember@1.13.7",
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": [
+            "multiple-nodes",
+            "wrong-type"
+          ]
+        },
+        "revision": "Ember@2.2.0",
         "loc": {
           "source": null,
           "start": {
@@ -145,6 +254,7 @@ define('ember-cli-app/templates/application', ['exports'], function (exports) {
         },
         "moduleName": "ember-cli-app/templates/application.hbs"
       },
+      isEmpty: false,
       arity: 0,
       cachedFragment: null,
       hasRendered: false,
@@ -177,14 +287,286 @@ define('ember-cli-app/templates/application', ['exports'], function (exports) {
   }()));
 
 });
-define('ember-cli-app/tests/adpaters/application.jshint', function () {
+define('ember-cli-app/templates/people', ['exports'], function (exports) {
 
   'use strict';
 
-  QUnit.module('JSHint - adpaters');
-  QUnit.test('adpaters/application.js should pass jshint', function(assert) { 
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "line": 5,
+              "column": 0
+            }
+          },
+          "moduleName": "ember-cli-app/templates/people.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("  ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("p");
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n  ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["content","person.name",["loc",[null,[3,4],[3,19]]]]
+        ],
+        locals: ["person"],
+        templates: []
+      };
+    }());
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": [
+            "wrong-type"
+          ]
+        },
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 5,
+            "column": 9
+          }
+        },
+        "moduleName": "ember-cli-app/templates/people.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
+        dom.insertBoundary(fragment, 0);
+        dom.insertBoundary(fragment, null);
+        return morphs;
+      },
+      statements: [
+        ["block","each",[["get","model",["loc",[null,[1,8],[1,13]]]]],[],0,null,["loc",[null,[1,0],[5,9]]]]
+      ],
+      locals: [],
+      templates: [child0]
+    };
+  }()));
+
+});
+define('ember-cli-app/templates/stats', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        meta: {
+          "fragmentReason": false,
+          "revision": "Ember@2.2.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 2,
+              "column": 2
+            },
+            "end": {
+              "line": 12,
+              "column": 2
+            }
+          },
+          "moduleName": "ember-cli-app/templates/stats.hbs"
+        },
+        isEmpty: false,
+        arity: 1,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("li");
+          var el2 = dom.createTextNode("\n      ID: ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("ul");
+          var el3 = dom.createTextNode("\n        ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("li");
+          var el4 = dom.createTextNode("Eye Colour: ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createTextNode(" ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createElement("span");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n        ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("li");
+          var el4 = dom.createTextNode("Gender: ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createTextNode(" ");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n        ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("li");
+          var el4 = dom.createTextNode("Age: ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n        ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("li");
+          var el4 = dom.createTextNode("Height: ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n      ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n    ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var element0 = dom.childAt(fragment, [1]);
+          var element1 = dom.childAt(element0, [3]);
+          var element2 = dom.childAt(element1, [1]);
+          var element3 = dom.childAt(element2, [3]);
+          var morphs = new Array(6);
+          morphs[0] = dom.createMorphAt(element0,1,1);
+          morphs[1] = dom.createMorphAt(element2,1,1);
+          morphs[2] = dom.createAttrMorph(element3, 'style');
+          morphs[3] = dom.createMorphAt(dom.childAt(element1, [3]),1,1);
+          morphs[4] = dom.createMorphAt(dom.childAt(element1, [5]),1,1);
+          morphs[5] = dom.createMorphAt(dom.childAt(element1, [7]),1,1);
+          return morphs;
+        },
+        statements: [
+          ["content","stat.id",["loc",[null,[4,10],[4,21]]]],
+          ["content","stat.eyeColour",["loc",[null,[6,24],[6,42]]]],
+          ["attribute","style",["concat",["background-color: ",["get","stat.eyeColour",["loc",[null,[6,76],[6,90]]]],"; width: 10px; height: 10px; display: inline-block"]]],
+          ["content","stat.gender",["loc",[null,[7,20],[7,35]]]],
+          ["content","stat.age",["loc",[null,[8,17],[8,29]]]],
+          ["content","stat.height",["loc",[null,[9,20],[9,35]]]]
+        ],
+        locals: ["stat"],
+        templates: []
+      };
+    }());
+    return {
+      meta: {
+        "fragmentReason": false,
+        "revision": "Ember@2.2.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 13,
+            "column": 5
+          }
+        },
+        "moduleName": "ember-cli-app/templates/stats.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]),1,1);
+        return morphs;
+      },
+      statements: [
+        ["block","each",[["get","model",["loc",[null,[2,10],[2,15]]]]],[],0,null,["loc",[null,[2,2],[12,11]]]]
+      ],
+      locals: [],
+      templates: [child0]
+    };
+  }()));
+
+});
+define('ember-cli-app/tests/adapters/application.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - adapters');
+  QUnit.test('adapters/application.js should pass jshint', function(assert) { 
     assert.expect(1);
-    assert.ok(false, 'adpaters/application.js should pass jshint.\nadpaters/application.js: line 3, col 41, \'DataAdapterMixin\' is not defined.\n\n1 error'); 
+    assert.ok(true, 'adapters/application.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/adapters/stat.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - adapters');
+  QUnit.test('adapters/stat.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(false, 'adapters/stat.js should pass jshint.\nadapters/stat.js: line 31, col 28, \'type\' is defined but never used.\nadapters/stat.js: line 31, col 21, \'store\' is defined but never used.\n\n2 errors'); 
   });
 
 });
@@ -258,6 +640,28 @@ define('ember-cli-app/tests/helpers/start-app.jshint', function () {
   });
 
 });
+define('ember-cli-app/tests/models/person.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - models');
+  QUnit.test('models/person.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'models/person.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/models/stat.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - models');
+  QUnit.test('models/stat.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'models/stat.js should pass jshint.'); 
+  });
+
+});
 define('ember-cli-app/tests/router.jshint', function () {
 
   'use strict';
@@ -266,6 +670,28 @@ define('ember-cli-app/tests/router.jshint', function () {
   QUnit.test('router.js should pass jshint', function(assert) { 
     assert.expect(1);
     assert.ok(true, 'router.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/routes/people.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - routes');
+  QUnit.test('routes/people.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'routes/people.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/routes/stats.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - routes');
+  QUnit.test('routes/stats.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'routes/stats.js should pass jshint.'); 
   });
 
 });
@@ -284,6 +710,196 @@ define('ember-cli-app/tests/test-helper.jshint', function () {
   QUnit.test('test-helper.js should pass jshint', function(assert) { 
     assert.expect(1);
     assert.ok(true, 'test-helper.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/unit/adapters/application-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('adapter:application', 'Unit | Adapter | application', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var adapter = this.subject();
+    assert.ok(adapter);
+  });
+
+});
+define('ember-cli-app/tests/unit/adapters/application-test.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - unit/adapters');
+  QUnit.test('unit/adapters/application-test.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'unit/adapters/application-test.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/unit/adapters/stat-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('adapter:stat', 'Unit | Adapter | stat', {
+    // Specify the other units that are required for this test.
+    // needs: ['serializer:foo']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var adapter = this.subject();
+    assert.ok(adapter);
+  });
+
+});
+define('ember-cli-app/tests/unit/adapters/stat-test.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - unit/adapters');
+  QUnit.test('unit/adapters/stat-test.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'unit/adapters/stat-test.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/unit/models/person-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('person', 'Unit | Model | person', {
+    // Specify the other units that are required for this test.
+    needs: []
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var model = this.subject();
+    // var store = this.store();
+    assert.ok(!!model);
+  });
+
+});
+define('ember-cli-app/tests/unit/models/person-test.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - unit/models');
+  QUnit.test('unit/models/person-test.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'unit/models/person-test.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/unit/models/stat-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('stat', 'Unit | Model | stat', {
+    // Specify the other units that are required for this test.
+    needs: []
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var model = this.subject();
+    // var store = this.store();
+    assert.ok(!!model);
+  });
+
+});
+define('ember-cli-app/tests/unit/models/stat-test.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - unit/models');
+  QUnit.test('unit/models/stat-test.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'unit/models/stat-test.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/unit/routes/people-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('route:people', 'Unit | Route | people', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+});
+define('ember-cli-app/tests/unit/routes/people-test.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - unit/routes');
+  QUnit.test('unit/routes/people-test.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/people-test.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/unit/routes/stats-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('route:stats', 'Unit | Route | stats', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+});
+define('ember-cli-app/tests/unit/routes/stats-test.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - unit/routes');
+  QUnit.test('unit/routes/stats-test.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/stats-test.js should pass jshint.'); 
+  });
+
+});
+define('ember-cli-app/tests/unit/serializers/stat-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('stat', 'Unit | Serializer | stat', {
+    // Specify the other units that are required for this test.
+    needs: ['serializer:stat']
+  });
+
+  // Replace this with your real tests.
+  ember_qunit.test('it serializes records', function (assert) {
+    var record = this.subject();
+
+    var serializedRecord = record.serialize();
+
+    assert.ok(serializedRecord);
+  });
+
+});
+define('ember-cli-app/tests/unit/serializers/stat-test.jshint', function () {
+
+  'use strict';
+
+  QUnit.module('JSHint - unit/serializers');
+  QUnit.test('unit/serializers/stat-test.js should pass jshint', function(assert) { 
+    assert.expect(1);
+    assert.ok(true, 'unit/serializers/stat-test.js should pass jshint.'); 
   });
 
 });
@@ -315,7 +931,7 @@ catch(err) {
 if (runningTests) {
   require("ember-cli-app/tests/test-helper");
 } else {
-  require("ember-cli-app/app")["default"].create({"name":"ember-cli-app","version":"0.0.0+ca2c0d2b"});
+  require("ember-cli-app/app")["default"].create({"name":"ember-cli-app","version":"0.0.0+99cb24a6"});
 }
 
 /* jshint ignore:end */

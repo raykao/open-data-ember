@@ -1,25 +1,32 @@
 var express = require('express');
 var app = express();
 var port = 3000;
+var cors = require('cors');
 
-app.use('/', function(req, res){
+app.use(cors());
+
+app.use('/people', function(req, res){
   res.send({
     people: [
       {
+        id: 1,
         name: "John Smith", 
-        age: "700"
+        age: 700
       },
       {
+        id: 2,
         name: "Sarah Jane Smith",
-        age: "60"
+        age: 60
       },
       {
+        id: 3,
         name: "Billy Kid",
-        age: "15"
+        age: 15
       },
       {
+        id: 4,
         name: "Nancy Tatooine",
-        age: "10"
+        age: 10
       }
     ]
   })

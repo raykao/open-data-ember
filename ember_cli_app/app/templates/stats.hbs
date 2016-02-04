@@ -1,0 +1,13 @@
+<ul>
+  {{#each model as |stat|}}
+    <li>
+      ID: {{stat.id}}
+      <ul>
+        <li>Eye Colour: {{stat.eyeColour}} <span style="background-color: {{stat.eyeColour}}; width: 10px; height: 10px; display: inline-block"></span></li>
+        <li>Gender: {{stat.gender}} </li>
+        <li>Age: {{stat.age}}</li>
+        <li>Height: {{stat.height}}</li>
+      </ul>
+    </li>
+  {{/each}}
+</ul>

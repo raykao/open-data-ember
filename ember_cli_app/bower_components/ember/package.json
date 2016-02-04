@@ -1,6 +1,7 @@
 {
   "name": "components-ember",
-  "version": "1.13.7",
+  "version": "2.2.0",
+  "license": "MIT",
   "description": "Ember Application Framework",
   "keywords": [
     "ember"

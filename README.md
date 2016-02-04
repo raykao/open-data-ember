@@ -8,9 +8,9 @@ The repo is divided into three parts:
 - ```json_api_server``` a simple node/express server that returns a simple JSON api to consume
 - ```html_data``` a plain old HTML page with some tabled data to be used/scraped
 
-## This talk isn't
+## Slidedeck
 
-- Not an overview of installing/setting up Ember
+[Google Slides](https://docs.google.com/a/peopleandcode.com/presentation/d/1mvbRGkEbwmBIqab60AwPq1x0443H_kAcDl9jH30uZxk/edit?usp=sharing)
 
 ## Contact
 

@@ -1,5 +1,8 @@
-{{#each model as |person|}}
-  <p>
-    {{person.name}}
-  </p>
-{{/each}}
+<ul>
+  {{#each model as |person|}}
+    <li>
+      <h2>{{person.name}}</h2>
+      <p>Age: {{person.age}}</p>
+    </li>
+  {{/each}}
+</ul>

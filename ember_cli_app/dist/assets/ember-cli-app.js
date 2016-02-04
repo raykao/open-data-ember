@@ -12,7 +12,7 @@ define('ember-cli-app/adapters/application', ['exports', 'ember-data'], function
   });
 
 });
-define('ember-cli-app/adapters/stat', ['exports', 'ember-cli-app/adapters/application', 'ember'], function (exports, ApplicationAdapter, Ember) {
+define('ember-cli-app/adapters/stat', ['exports', 'ember-data', 'ember'], function (exports, DS, Ember) {
 
   'use strict';
 
@@ -24,14 +24,14 @@ define('ember-cli-app/adapters/stat', ['exports', 'ember-cli-app/adapters/applic
     var rows = $(htmlDocument).find('tbody tr');
 
     $.each(rows, function (_, row) {
-      var props = $(row).find('td');
+      var cells = $(row).find('td');
 
       var stat = {
-        id: $.trim($(props[0]).text()),
-        age: $.trim($(props[1]).text()),
-        gender: $.trim($(props[2]).text()),
-        height: $.trim($(props[3]).text()),
-        eyeColour: $.trim($(props[4]).text())
+        id: $(cells[0]).text(),
+        age: $(cells[1]).text(),
+        gender: $(cells[2]).text(),
+        height: $(cells[3]).text(),
+        eyeColour: $(cells[4]).text()
       };
 
       stats.push(stat);
@@ -40,7 +40,7 @@ define('ember-cli-app/adapters/stat', ['exports', 'ember-cli-app/adapters/applic
     return { stats: stats };
   }
 
-  exports['default'] = ApplicationAdapter['default'].extend({
+  exports['default'] = DS['default'].RESTAdapter.extend({
     host: 'http://localhost:8000',
 
     findAll: function findAll(store, type) {
@@ -300,12 +300,12 @@ define('ember-cli-app/templates/people', ['exports'], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 1,
-              "column": 0
+              "line": 2,
+              "column": 2
             },
             "end": {
-              "line": 5,
-              "column": 0
+              "line": 7,
+              "column": 2
             }
           },
           "moduleName": "ember-cli-app/templates/people.hbs"
@@ -316,14 +316,24 @@ define('ember-cli-app/templates/people', ['exports'], function (exports) {
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("  ");
+          var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createElement("p");
+          var el1 = dom.createElement("li");
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("h2");
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n      ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("p");
+          var el3 = dom.createTextNode("Age: ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n    ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n  ");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
@@ -331,12 +341,15 @@ define('ember-cli-app/templates/people', ['exports'], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]),1,1);
+          var element0 = dom.childAt(fragment, [1]);
+          var morphs = new Array(2);
+          morphs[0] = dom.createMorphAt(dom.childAt(element0, [1]),0,0);
+          morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]),1,1);
           return morphs;
         },
         statements: [
-          ["content","person.name",["loc",[null,[3,4],[3,19]]]]
+          ["content","person.name",["loc",[null,[4,10],[4,25]]]],
+          ["content","person.age",["loc",[null,[5,14],[5,28]]]]
         ],
         locals: ["person"],
         templates: []
@@ -344,12 +357,7 @@ define('ember-cli-app/templates/people', ['exports'], function (exports) {
     }());
     return {
       meta: {
-        "fragmentReason": {
-          "name": "missing-wrapper",
-          "problems": [
-            "wrong-type"
-          ]
-        },
+        "fragmentReason": false,
         "revision": "Ember@2.2.0",
         "loc": {
           "source": null,
@@ -358,8 +366,8 @@ define('ember-cli-app/templates/people', ['exports'], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 5,
-            "column": 9
+            "line": 8,
+            "column": 5
           }
         },
         "moduleName": "ember-cli-app/templates/people.hbs"
@@ -370,19 +378,21 @@ define('ember-cli-app/templates/people', ['exports'], function (exports) {
       hasRendered: false,
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
-        var el1 = dom.createComment("");
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var morphs = new Array(1);
-        morphs[0] = dom.createMorphAt(fragment,0,0,contextualElement);
-        dom.insertBoundary(fragment, 0);
-        dom.insertBoundary(fragment, null);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]),1,1);
         return morphs;
       },
       statements: [
-        ["block","each",[["get","model",["loc",[null,[1,8],[1,13]]]]],[],0,null,["loc",[null,[1,0],[5,9]]]]
+        ["block","each",[["get","model",["loc",[null,[2,10],[2,15]]]]],[],0,null,["loc",[null,[2,2],[7,11]]]]
       ],
       locals: [],
       templates: [child0]
@@ -931,7 +941,7 @@ catch(err) {
 if (runningTests) {
   require("ember-cli-app/tests/test-helper");
 } else {
-  require("ember-cli-app/app")["default"].create({"name":"ember-cli-app","version":"0.0.0+99cb24a6"});
+  require("ember-cli-app/app")["default"].create({"name":"ember-cli-app","version":"0.0.0+401be4e8"});
 }
 
 /* jshint ignore:end */

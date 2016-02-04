@@ -1,4 +1,4 @@
-import ApplicationAdapter from './application';
+import DS from 'ember-data';
 import Ember from 'ember';
 
 var $ = Ember.$;
@@ -9,14 +9,14 @@ function extractStats(htmlDocument) {
   var rows = $(htmlDocument).find('tbody tr');
 
   $.each(rows, function(_, row){
-    let props = $(row).find('td');
+    let cells = $(row).find('td');
     
     let stat = {        
-      id: $.trim($(props[0]).text()),
-      age: $.trim($(props[1]).text()),
-      gender: $.trim($(props[2]).text()),
-      height: $.trim($(props[3]).text()),
-      eyeColour: $.trim($(props[4]).text()),
+      id: $(cells[0]).text(),
+      age: $(cells[1]).text(),
+      gender: $(cells[2]).text(),
+      height: $(cells[3]).text(),
+      eyeColour: $(cells[4]).text(),
     };
 
     stats.push(stat);
@@ -25,7 +25,7 @@ function extractStats(htmlDocument) {
   return {stats};
 }
 
-export default ApplicationAdapter.extend({
+export default DS.RESTAdapter.extend({
   host: 'http://localhost:8000',
 
   findAll: function(store, type) {
